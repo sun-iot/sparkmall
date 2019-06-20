@@ -244,3 +244,36 @@ DataFrame 是一个分布式数据容器。相比于RDD，DataFrame 更像传统
 
 # 搭建过程
 
+# 需求
+
+## 1、获取点击、下单和支付数量排名前 10 的品类
+
+**简介**
+
+在符合条件的 session中，获取点击、下单和支付数量排名前 10的品类。数据中的每个 session可能都会对一些品类的商品进行点击、下单和支付等等行为，那么现在就需要获取这些session 点击、下单和支付数量排名前10 的最热门的品类。
+
+```sql
+CREATE TABLE `category_top10` (
+  `taskId` text,
+  `category_id` text,
+  `click_count` bigint(20) DEFAULT NULL,
+  `order_count` bigint(20) DEFAULT NULL,
+  `pay_count` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+```
+
+**思路**
+
+> 1. 从Hive表中获取用户行为数据
+> 2. 使用累加器将不同的品类的不同指标数据聚合在一起：（K-V）->  (category-指标, SumCount)
+> 3.  将聚合后的结果转化结构：(category-指标, SumCount) -> (category,(指标,SumCount))
+> 4. 将转换结构后的相同品类的数据分组在一起
+> 5. 根据品类的不同指标进行排序（降序）
+> 6. 获取排序后的前10名
+> 7. 将结果保存到数据库中
+
+## 2、Top10 **热门品类中** Top10 **活跃** Session统计
+
+**简介**
+
+对于排名前 10的品类，**分别**获取其**点击次数**排名前 10的 sessionId。 
