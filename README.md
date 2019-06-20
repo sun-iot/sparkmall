@@ -271,7 +271,7 @@ CREATE TABLE `category_top10` (
 > 5. 根据品类的不同指标进行排序（降序）
 > 6. 获取排序后的前10名
 > 7. 将结果保存到数据库中
-
+![1560992202867](https://github.com/sun-iot/picture/blob/master/sparkmall/1560857549848.png)
 ## 2、Top10 **热门品类中** Top10 **活跃** Session统计
 
 **简介**
