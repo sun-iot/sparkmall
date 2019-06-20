@@ -11,11 +11,11 @@ PM（产品经理）、数据分析师以及管理人员分析现有产品的情
 
 ## 1.2 项目整体框架
 
-![1560992202867](.\assets\1560992202867.png)
+![1560992202867](https://github.com/sun-iot/picture/blob/master/sparkmall/1560992202867.png)
 
 ## 1.3 业务需求分析
 
-![1560993790258](.\assets\1560993790258.png)
+![1560993790258](https://github.com/sun-iot/picture/blob/master/sparkmall/1560993790258.png)
 
 项目分为**离线分析系统**与**实时分析系统**两大模块
 
@@ -94,7 +94,7 @@ Kafka broker 中获取数据，通过 Spark Streaming 的流式处理对广告�
 
 ## 1.5 项目需求
 
-![1560994652782](assets/1560994652782.png)
+![1560994652782](https://github.com/sun-iot/picture/blob/master/sparkmall/1560994652782.png)
 
 ### 1.5.1 用户访问session统计
 
@@ -120,9 +120,9 @@ Kafka broker 中获取数据，通过 Spark Streaming 的流式处理对广告�
 
 ## 2.1 Spark
 
-![1560995507663](assets/1560995507663.png)
+![1560995507663](https://github.com/sun-iot/picture/blob/master/sparkmall/1560995507663.png)
 
-![1560995516403](assets/1560995516403.png)
+![1560995516403](https://github.com/sun-iot/picture/blob/master/sparkmall/1560995516403.png)
 
 ## 2.2 SparkCore
 
