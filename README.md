@@ -251,7 +251,6 @@ DataFrame 是一个分布式数据容器。相比于RDD，DataFrame 更像传统
 **简介**
 
 在符合条件的 session中，获取点击、下单和支付数量排名前 10的品类。数据中的每个 session可能都会对一些品类的商品进行点击、下单和支付等等行为，那么现在就需要获取这些session 点击、下单和支付数量排名前10 的最热门的品类。
-
 ```sql
 CREATE TABLE `category_top10` (
   `taskId` text,
@@ -261,7 +260,6 @@ CREATE TABLE `category_top10` (
   `pay_count` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
-
 **思路**
 
 > 1. 从Hive表中获取用户行为数据
@@ -272,8 +270,79 @@ CREATE TABLE `category_top10` (
 > 6. 获取排序后的前10名
 > 7. 将结果保存到数据库中
 ![1560992202867](https://github.com/sun-iot/picture/blob/master/sparkmall/1560857549848.png)
+
 ## 2、Top10 **热门品类中** Top10 **活跃** Session统计
 
 **简介**
 
 对于排名前 10的品类，**分别**获取其**点击次数**排名前 10的 sessionId。 
+> 1. 根据需求1中的结果对原始数据进行过滤
+> 2. 将过滤后的数据进行结构的转换：（ category-sessionid, 1 )
+> 3. 将转化结构后的数据进行聚合：（ category-sessionid, sum）
+> 4. 将聚合后的数据进行结构转换：（ category-sessionid, sum）->（ category,(sessionid, sum)）
+> 5. 将转换结构的数据进行分组：（category，Iterator[(sessionid, sum) ]）
+> 6. 对分组后的数据进行排序，取前10名
+> 7. 将结果保存到Mysql中
+![1561086415434](https://github.com/sun-iot/picture/blob/master/sparkmall/1561086415434.png)
+
+## 3.页面单挑转化率统计
+
+**简介**
+
+计算页面单跳转化率，什么是页面单跳转换率，比如一个用户在一次Session 过程中访问的页面路径3,5,7,9,10,21，那么页面 3 跳到页面 5 叫一次单跳，7-9 也叫一次单跳，那么单跳转化率就是要统计页面点击的概率，比如：计算 3-5的单跳转化率，先获取符合条件的 Session对于页面 3 的访问次数（PV）为 A，然后获取符合条件的 Session中访问了页面 3又紧接着访问了页面 5的次数为 B，那么 B/A就是 3-5的页面单跳转化率。
+
+![1561087180893](https://github.com/sun-iot/picture/blob/master/sparkmall/1561087180893.png)
+**页面的访问时有先后，要做好排序**
+
+**思路**
+
+> 1. 从行为表中获取数据（pageid）
+> 2. 对数据进行筛选过滤，保留需要统计的页面数据
+> 3. 将页面数据进行结构的转换（pageid, 1）
+> 4. 将转换后的数据进行聚合统计（pageid, sum）(分母)
+> 5. 从行为表中获取数据，使用session进行分组（sessionid, Iterator[ (pageid , action_time)  ]）
+> 6. 对分组后的数据进行时间排序（升序）
+> 7. 将排序后的页面ID，两两结合：（1-2，2-3，3-4）
+> 8. 对数据进行筛选过滤（1-2，2-3，3-4，4-5，5-6，6-7）
+> 9. 对过滤后的数据进行结构的转换：（pageid1-pageid2, 1）
+> 10. 对转换结构后的数据进行聚合统计：（pageid1-pageid2, sum1）(分子)
+> 11. 查询对应的分母数据 （pageid1, sum2）
+> 12. 计算转化率 ： sum1 / sum2
+![1561087395505](https://github.com/sun-iot/picture/blob/master/sparkmall/1561087395505.png)
+
+# 实时需求
+
+## Kafka创建主题
+```shell
+bin/kafka-topics.sh --zookeeper hadoop104:2181 --create --replication-factor 3 --partitions 3 --topic ads_log
+```
+## Kafka生产者
+```shell
+ bin/kafka-console-producer.sh --broker-list hadoop104:9092,hadoop104:9092,hadoop106:9092 --topic ads_log
+```
+## Kafka消费者
+```shell
+bin/kafka-console-consumer.sh  --bootstrap-server hadoop104:9092,hadoop104:9092,hadoop106:9092 --topic ads_log --from-beginning
+```
+## 1.广告黑名单实时统计
+
+**实现实时的动态黑名单机制：将每天对某个广告点击超过 100 次的用户拉黑。**
+**黑名单保存到redis中, 已加入黑名单的用户不再进行检查。**
+
+**思路**
+
+> 1.对原始数据进行筛选（黑名单数据过滤）
+> 2.将数据进行结构的转换 ：(date-adv-user, 1)
+> 3.将转换结构后的数据进行聚合：(date-adv-user, sum)
+> 4.对聚合的结果进行阈值的判断
+> 5.如果超过阈值，那么需要拉入黑名单(redis)
+
+**在程序中会遇到三个问题以及解决**
+
+> 问题1:task中使用的第三方对象没有序列化（连接对象）
+>> 在Executor节点创建连接
+> 问题2:黑名单的数据只取了一次
+>> 希望获取数据的操作可以周期的执行（transform）
+>问题3:java序列化会出现无法反序列化（transient）的问题
+>> 采用广播变量来传递序列化数据
+
