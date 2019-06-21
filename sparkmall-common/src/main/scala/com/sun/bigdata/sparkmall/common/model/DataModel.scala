@@ -79,3 +79,20 @@ case class CityInfo (city_id:Long,
                     ){
 
 }
+
+/**
+  *
+  * @param timestamp
+  * @param area
+  * @param city
+  * @param userid
+  * @param adid
+  */
+case class MyKafkaMessage (timestamp:String,
+                           area:String,
+                           city:String,
+                           userid:String,
+                           adid:String
+                          ){
+
+}
