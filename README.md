@@ -341,8 +341,10 @@ bin/kafka-console-consumer.sh  --bootstrap-server hadoop104:9092,hadoop104:9092,
 
 > 问题1:task中使用的第三方对象没有序列化（连接对象）
 >> 在Executor节点创建连接
+
 > 问题2:黑名单的数据只取了一次
 >> 希望获取数据的操作可以周期的执行（transform）
+
 >问题3:java序列化会出现无法反序列化（transient）的问题
 >> 采用广播变量来传递序列化数据
 
