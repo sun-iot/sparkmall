@@ -356,4 +356,22 @@ bin/kafka-console-consumer.sh  --bootstrap-server hadoop104:9092,hadoop104:9092,
 >问题3:java序列化会出现无法反序列化（transient）的问题
 >> 采用广播变量来传递序列化数据
 
+## 2.实时数据分析：  广告点击量实时统计
 
+每天各地区各城市各广告的点击流量实时统计。
+
+
+
+## 3.实时数据分析：  每天各地区 top3 热门广告
+
+每天各地区 top3 热门广告
+
+## 增加部分
+
+**1. 统计最近一分钟的广告点击的趋势(实时)
+
+![1561262402145](https://github.com/sun-iot/picture/blob/master/sparkmall/1561262402145.png)
+
+**2. 统计每个页面平均停留时间(离时)
+
+![1561262444535](https://github.com/sun-iot/picture/blob/master/sparkmall/1561262444535.png)
