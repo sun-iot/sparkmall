@@ -269,6 +269,7 @@ CREATE TABLE `category_top10` (
 > 5. 根据品类的不同指标进行排序（降序）
 > 6. 获取排序后的前10名
 > 7. 将结果保存到数据库中
+
 ![1560992202867](https://github.com/sun-iot/picture/blob/master/sparkmall/1560857549848.png)
 
 ## 2、Top10 **热门品类中** Top10 **活跃** Session统计
@@ -283,6 +284,7 @@ CREATE TABLE `category_top10` (
 > 5. 将转换结构的数据进行分组：（category，Iterator[(sessionid, sum) ]）
 > 6. 对分组后的数据进行排序，取前10名
 > 7. 将结果保存到Mysql中
+
 ![1561086415434](https://github.com/sun-iot/picture/blob/master/sparkmall/1561086415434.png)
 
 ## 3.页面单挑转化率统计
@@ -308,6 +310,7 @@ CREATE TABLE `category_top10` (
 > 10. 对转换结构后的数据进行聚合统计：（pageid1-pageid2, sum1）(分子)
 > 11. 查询对应的分母数据 （pageid1, sum2）
 > 12. 计算转化率 ： sum1 / sum2
+
 ![1561087395505](https://github.com/sun-iot/picture/blob/master/sparkmall/1561087395505.png)
 
 # 实时需求
@@ -327,14 +330,19 @@ bin/kafka-console-consumer.sh  --bootstrap-server hadoop104:9092,hadoop104:9092,
 ## 1.广告黑名单实时统计
 
 **实现实时的动态黑名单机制：将每天对某个广告点击超过 100 次的用户拉黑。**
+
 **黑名单保存到redis中, 已加入黑名单的用户不再进行检查。**
 
 **思路**
 
 > 1.对原始数据进行筛选（黑名单数据过滤）
+
 > 2.将数据进行结构的转换 ：(date-adv-user, 1)
+
 > 3.将转换结构后的数据进行聚合：(date-adv-user, sum)
+
 > 4.对聚合的结果进行阈值的判断
+
 > 5.如果超过阈值，那么需要拉入黑名单(redis)
 
 **在程序中会遇到三个问题以及解决**
@@ -347,4 +355,5 @@ bin/kafka-console-consumer.sh  --bootstrap-server hadoop104:9092,hadoop104:9092,
 
 >问题3:java序列化会出现无法反序列化（transient）的问题
 >> 采用广播变量来传递序列化数据
+
 

@@ -25,4 +25,14 @@ object DateUtil {
     val sdf = new SimpleDateFormat(f)
     sdf.format(d)
   }
+  /**
+    * 将时间字符串按照指定的格式转换为时间戳
+    * @param dateString
+    * @param f
+    * @return
+    */
+  def getTimestamp( dateString : String, f:String ): Long = {
+    val sdf = new SimpleDateFormat(f)
+    sdf.parse(dateString).getTime
+  }
 }

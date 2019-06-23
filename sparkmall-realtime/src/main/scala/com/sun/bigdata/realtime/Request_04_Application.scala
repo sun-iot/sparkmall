@@ -45,6 +45,7 @@ object Request_04_Application {
 //        !blacklist.contains(message.userid)
 //      }
 //    )
+
     val messageFilterDream: DStream[MyKafkaMessage] = messageKafkaDream.transform(
       rdd => {
         // Coding :Driver n
@@ -75,6 +76,7 @@ object Request_04_Application {
         val sum: Long = option.getOrElse(0L) + seq.sum
         Option(sum)
       }
+
     }
     // TODO 3. 对聚合的结果进行阈值的判断
     stateDream.foreachRDD(
